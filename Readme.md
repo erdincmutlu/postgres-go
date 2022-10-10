@@ -1,6 +1,7 @@
 PostgreSQL handlers
 
-dbConfig: Database openmode, database role
+dbconfig: Database openmode, database role
+dbsize: Size of the database
 dbAbility: Database status
 
 PostgreSQL commands

@@ -13,7 +13,6 @@ func dbSetup() (*sql.DB, error) {
 	if err != nil {
 		return nil, err
 	}
-	defer dbClient.Close()
 
 	err = dbClient.Ping()
 	if err != nil {
@@ -29,4 +28,46 @@ func dbConnectionString() string {
 	psqlconn := fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s sslmode=disable",
 		host, port, user, password, dbname)
 	return psqlconn
+}
+
+func dbSize(db *sql.DB) (string, error) {
+	query := "SELECT pg_database_size('testdb')"
+
+	resp, err := db.Exec(query)
+	if err != nil {
+		return "", err
+	}
+	fmt.Printf("dbSize Resp: %+v\n", resp)
+	return "", nil
+}
+
+type account struct {
+	id    int
+	email string
+	token string
+}
+
+func dbSelect(db *sql.DB) (*account, error) {
+	query := "SELECT * from account"
+
+	var acc account
+	rows, err := db.Query(query)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		err := rows.Scan(&acc.id, &acc.email, &acc.token)
+		if err != nil {
+			panic(err)
+		}
+		fmt.Printf("%+v\n", acc)
+	}
+	err = rows.Err()
+	if err != nil {
+		return nil, err
+	}
+
+	return &acc, nil
 }

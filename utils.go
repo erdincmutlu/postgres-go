@@ -25,7 +25,7 @@ func apiErrorMessage(err error) string {
 	switch err {
 	case nil:
 		return "Status ok"
-	case someError:
+	case errSome:
 		return err.Error()
 	default:
 		return "Internal error"
