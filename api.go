@@ -12,11 +12,13 @@ func dbconfig(dbClient *sql.DB) http.HandlerFunc {
 		httpStatusCode := http.StatusOK
 		var err error
 
-		resp := map[string]interface{}{
-			"status": "Ok",
-			"data": Response{
-				Data: dbConnectionString(),
-			},
+		resp := Response{
+			Status:   "Ok",
+			Endpoint: "/dbconfig",
+			Data:     dbConnectionString(),
+		}
+		if err != nil {
+			resp.Error = err.Error()
 		}
 
 		writeResponse(w, resp, httpStatusCode, err)
@@ -28,11 +30,13 @@ func dbsize(dbClient *sql.DB) http.HandlerFunc {
 		httpStatusCode := http.StatusOK
 
 		size, err := dbSize(dbClient)
-		resp := map[string]interface{}{
-			"status": "Ok",
-			"data": Response{
-				Data: size,
-			},
+		resp := Response{
+			Status:   "Ok",
+			Endpoint: "/dbsize",
+			Data:     size,
+		}
+		if err != nil {
+			resp.Error = err.Error()
 		}
 
 		writeResponse(w, resp, httpStatusCode, err)
@@ -44,11 +48,13 @@ func dbselect(dbClient *sql.DB) http.HandlerFunc {
 		httpStatusCode := http.StatusOK
 
 		acc, err := dbSelect(dbClient)
-		resp := map[string]interface{}{
-			"status": "Ok",
-			"data": Response{
-				Data: acc.email,
-			},
+		resp := Response{
+			Status:   "Ok",
+			Endpoint: "/select",
+			Data:     acc.email,
+		}
+		if err != nil {
+			resp.Error = err.Error()
 		}
 
 		writeResponse(w, resp, httpStatusCode, err)

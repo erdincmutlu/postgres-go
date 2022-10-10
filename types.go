@@ -5,6 +5,8 @@ import "errors"
 var errSome = errors.New("some error")
 
 type Response struct {
-	Id   int         `json:"id"`
-	Data interface{} `json:"data"`
+	Status   string      `json:"status"`
+	Error    string      `json:"error,omitempty"`
+	Endpoint string      `json:"endpoint"`
+	Data     interface{} `json:"data"`
 }

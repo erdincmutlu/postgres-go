@@ -30,15 +30,29 @@ func dbConnectionString() string {
 	return psqlconn
 }
 
-func dbSize(db *sql.DB) (string, error) {
+func dbSize(db *sql.DB) (int, error) {
 	query := "SELECT pg_database_size('testdb')"
 
-	resp, err := db.Exec(query)
+	rows, err := db.Query(query)
 	if err != nil {
-		return "", err
+		return 0, err
 	}
-	fmt.Printf("dbSize Resp: %+v\n", resp)
-	return "", nil
+	defer rows.Close()
+
+	var size int
+	for rows.Next() {
+		err := rows.Scan(&size)
+		if err != nil {
+			panic(err)
+		}
+		fmt.Printf("%+v\n", size)
+	}
+	err = rows.Err()
+	if err != nil {
+		return 0, err
+	}
+
+	return size, nil
 }
 
 type account struct {
@@ -49,14 +63,13 @@ type account struct {
 
 func dbSelect(db *sql.DB) (*account, error) {
 	query := "SELECT * from account"
-
-	var acc account
 	rows, err := db.Query(query)
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
 
+	var acc account
 	for rows.Next() {
 		err := rows.Scan(&acc.id, &acc.email, &acc.token)
 		if err != nil {
